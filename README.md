@@ -1,0 +1,1 @@
+# ctfcup-2020-ad-finals
