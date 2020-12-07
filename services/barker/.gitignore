@@ -1,0 +1,6 @@
+
+app/barker/apps/main/migrations/
+
+__pycache__/
+
+venv/
