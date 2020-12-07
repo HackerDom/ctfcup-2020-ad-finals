@@ -1,10 +1,13 @@
+import hashlib
+
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
-from .models import Bark, Comment, Friendship
-from .utils import get_subscribes, get_subscribers, get_friends, get_user_friends_info, is_friends
+from .models import Bark, Comment, Friendship, Token
+from .utils import get_user_friends_info, is_friends
+from .apps import MainConfig
 
 
 def index(request):
@@ -106,3 +109,16 @@ def revoke_friend(request, username):
     Friendship.objects.filter(first_user=request.user, second_user=user).delete()
     Friendship.objects.filter(first_user=user, second_user=request.user).delete()
     return HttpResponseRedirect("/friends/")
+
+
+@login_required(login_url="/")
+def get_profile(request):
+    tokens = Token.objects.filter(owner=request.user)
+    return render(request, "main/profile.html", {"tokens": tokens})
+
+
+@login_required(login_url="/")
+def generate_token(request):
+    value = hashlib.md5(f"{request.user.username}{str(next(MainConfig.generator))}".encode()).hexdigest()
+    Token.objects.create(owner=request.user, value=value)
+    return HttpResponseRedirect("/profile/")

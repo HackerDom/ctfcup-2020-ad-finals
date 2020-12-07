@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<br>
+<div id="profile-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h1><a href="/">Barker</a></h1>
+            </div>
+            <div class="col-sm-6">
+                <table id="main-table" class="table table-bordered table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-2 ">
+                                        <h3>
+                                            <a href="/{{request.user.username}}"><i class="fa fa-long-arrow-alt-left" aria-hidden="true"></i></a>
+                                        </h3>
+                                    </div>
+                                    <div><h3>My profile</h3></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h3>Username: </h3>
+                                    </div>
+                                    <div>
+                                        <h3><b>@{{ request.user.username }}</b></h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h3>First Name: </h3>
+                                    </div>
+                                    <div>
+                                        <h3><b>{{ request.user.first_name }}</b></h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <h3>Last Name: </h3>
+                                    </div>
+                                    <div>
+                                        <h3><b>{{ request.user.last_name }}</b></h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <thead>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="container-fluid text-center">
+                                        <h3>Tokens</h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                        {% for token in tokens %}
+                        <tr>
+                            <td>
+                                <div>
+                                    <div class="col-sm-12" style="font-family: 'monospace'"><h5>{{token.value}}</h5></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <thead>
+                        <tr>
+                            <td>
+                                <div class="container-fluid text-right">
+                                    <a href="{% url 'main:generate_token' %}" class="btn btn-outline-warning">Generate</a>
+                                </div>
+                            </td>
+                        </tr>
+                        </thead>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-3">
+                {% if request.user.is_authenticated %}
+                <button onclick="location.href={% url 'main:logout' %};" class="btn btn-outline-danger btn-block btn-lg">Logout</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

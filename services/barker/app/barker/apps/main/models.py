@@ -21,3 +21,8 @@ class Friendship(models.Model):
     first_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fuser")
     second_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="suser")
     status = models.BooleanField(default=False) # do True for vuln
+
+
+class Token(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    value = models.CharField(max_length=32)

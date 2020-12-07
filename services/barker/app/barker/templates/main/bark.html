@@ -14,20 +14,21 @@
             </div>
             <div class="col-sm-6">
                 <table id="main-table" class="table table-bordered table-dark table-hover">
-                    <thead></thead>
-                    <tbody>
+                    <thead>
                         <tr>
                             <td>
                                 <div class="row">
                                     <div class="col-sm-2 ">
                                         <h3>
-                                            <a href="/{{request.user.username}}"><i class="fa fa-long-arrow-alt-left" aria-hidden="true"></i></a>
+                                            <a href="/{{bark.user.username}}"><i class="fa fa-long-arrow-alt-left" aria-hidden="true"></i></a>
                                         </h3>
                                     </div>
                                     <div><h3>Bark</h3></div>
                                 </div>
                             </td>
                         </tr>
+                    </thead>
+                    <tbody>
                         <tr>
                             <td>
                                 <div class="row">
@@ -43,11 +44,13 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <h3>Comments</h3>
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <td>
+                                    <h3>Comments</h3>
+                                </td>
+                            </tr>
+                        </thead>
                         {% for comment in comments %}
                         {% if not comment.is_private or comment.is_private and request.user.username == comment.user.username or comment.is_private and request.user.username == bark.user.username %}
                         <tr>
@@ -59,6 +62,9 @@
                                     <div class="col-sm-10"><h5><b>
                                         {{ comment.user.first_name }} {{ comment.user.last_name }}
                                         <a href="/{{comment.user.username}}">@{{ comment.user.username }}</a></b>
+                                        {% if comment.is_private %}
+                                        <div class="d-inline float-right btn btn-danger">private</div>
+                                        {% endif %}
                                         <hr>
                                         {{ comment.text }}</h5>
                                     </div>
