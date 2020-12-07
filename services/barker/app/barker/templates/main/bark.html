@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<br>
+<div id="barks-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h1><a href="/">Barker</a></h1>
+            </div>
+            <div class="col-sm-6">
+                <table id="main-table" class="table table-bordered table-dark table-hover">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-2 ">
+                                        <h3>
+                                            <a href="/{{request.user.username}}"><i class="fa fa-long-arrow-alt-left" aria-hidden="true"></i></a>
+                                        </h3>
+                                    </div>
+                                    <div><h3>Bark</h3></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-2 ">
+                                        <img src="{% static 'imgs/dog.svg' %}" id="{{bark.user.username}}-img" class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <div class="col-sm-10"><h3><b>
+                                        {{ bark.user.first_name }} {{ bark.user.last_name }}
+                                        <a href="/{{bark.user.username}}">@{{ bark.user.username }}</a></b>
+                                        <hr>
+                                        {{ bark.text }}</h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>Comments</h3>
+                            </td>
+                        </tr>
+                        {% for comment in comments %}
+                        {% if not comment.is_private or comment.is_private and request.user.username == comment.user.username or comment.is_private and request.user.username == bark.user.username %}
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-2 ">
+                                        <img src="{% static 'imgs/dog.svg' %}" id="{{comment.user.username}}-img" class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <div class="col-sm-10"><h5><b>
+                                        {{ comment.user.first_name }} {{ comment.user.last_name }}
+                                        <a href="/{{comment.user.username}}">@{{ comment.user.username }}</a></b>
+                                        <hr>
+                                        {{ comment.text }}</h5>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% if request.user.is_authenticated %}
+                        <tr>
+                            <td>
+                                <form action="{% url 'main:leave_comment' bark.id %}" method="post"> {% csrf_token %}
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="comment_text" rows="3" placeholder="Leave your comment..."></textarea>
+                                        <br>
+                                        <div class="form-check text-right">
+                                            <input type="checkbox" class="form-check-input" id="is-private" name="is_private">
+                                            <label class="form-check-label" for="is-private"><h4>private</h4></label>
+                                        </div>
+                                        <br>
+                                        <div class="text-right">
+                                            <button type="submit" class="btn btn-outline-light"><h4>Comment</h4></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-3">
+                {% if request.user.is_authenticated %}
+                <button onclick="location.href={% url 'main:logout' %};" class="btn btn-outline-danger btn-block btn-lg">Logout</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

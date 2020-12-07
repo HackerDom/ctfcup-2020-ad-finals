@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Blog{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<br>
+<div id="barks-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+                <h1><a href="/">Barker</a></h1>
+                <br>
+                {% if request.user.is_authenticated and requested_user and request.user.username != requested_user.username and not is_friend%}
+                <a href="{% url 'main:add_friend' requested_user.username %}" class="btn btn-outline-success btn-block btn-lg">Add to friend</a>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'main:show_friends' %}" class="btn btn-outline-success btn-block btn-lg">My friends</a>
+                <button onclick="location.href={% url 'main:logout' %}" class="btn btn-outline-danger btn-block btn-lg">Logout</button>
+                {% endif %}
+            </div>
+            <div class="col-sm-6">
+                <table id="main-table" class="table table-bordered table-dark table-hover">
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="{% static 'imgs/dog.svg' %}" class="img-thumbnail" id="{{requested_user.username}}-img">
+                                <br><br>
+                                <h2>{{ requested_user.first_name }} {{ requested_user.last_name }}</h2>
+                                <h3><a href="/{{ requested_user.username }}">@{{ requested_user.username }}</a></h3>
+                            </td>
+                        </tr>
+                        {% if request.user.is_authenticated and request.user.username == requested_user.username%}
+                        <tr>
+                            <td>
+                                <form action="{% url 'main:add_bark' %}" method="post"> {% csrf_token %}
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="bark_text" rows="3" placeholder="How are you doing today?"></textarea>
+                                        <br>
+                                        <div class="form-check text-right">
+                                            <input type="checkbox" class="form-check-input" id="is-private" name="is_private">
+                                            <label class="form-check-label" for="is-private"><h4>private</h4></label>
+                                        </div>
+                                        <div class="text-right">
+                                            <button type="submit" class="btn btn-outline-light"><h4>Bark</h4></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% for bark in barks %}
+                        {% if not bark.is_private or is_friend or request.user.username == requested_user.username%}
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <img src="{% static 'imgs/dog.svg' %}" id="{{requested_user.username}}-img" class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <h3><b>
+                                            {{ requested_user.first_name }} {{ requested_user.last_name }}
+                                            <a href="/{{ requested_user.username }}">@{{ requested_user.username }}</a></b>
+                                            <hr>
+                                            <a href="{% url 'main:get_bark' bark.id %}">{{ bark.text }}</a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-3">
+                <h3>New Barks</h3>
+                <table id="new-barks-table" class="table table-bordered table-dark table-hover">
+                    <thead></thead>
+                    <tbody>
+                        {% for new_bark in new_barks %}
+                        {% if not new_bark.is_private %}
+                        <tr>
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-2 ">
+                                        <img src="{% static 'imgs/dog.svg' %}" id="{{new_bark.user.username}}-img" class="img-thumbnail rounded-circle">
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <h5><b>
+                                            {{ new_bark.user.first_name }} {{ new_bark.user.last_name }}
+                                            <a href="/{{ new_bark.user.username }}">@{{ new_bark.user.username }}</a></b>
+                                            <hr>
+                                            <a href="{% url 'main:get_bark' new_bark.id %}">{{ new_bark.text }}</a>
+                                        </h5>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

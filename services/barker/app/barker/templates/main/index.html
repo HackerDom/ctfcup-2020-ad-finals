@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+<div id="main-page">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="left-part col-sm-6">
+            </div>
+            <div class="right-part col-sm-6">
+                <div class="centered">
+                    <div class="row"><h1>Welcome to Barker!</h1></div>
+                    <div class="main-page-btns">
+                        <div class="row">
+                            <a class="btn btn-outline-light btn-lg btn-block" href="{% url 'main:login' %}" role="button">
+                                <b>Log In</b>
+                            </a>
+                        </div>
+                        </br>
+                        <div class="row">
+                            <a class="btn btn-outline-danger btn-lg btn-block" href="{% url 'main:signup' %}" role="button">
+                                <b>Sign Up</b>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

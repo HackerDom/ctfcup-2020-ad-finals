@@ -1,0 +1,80 @@
+@font-face {
+ font-family: "Alisa";
+ src: url("../fonts/custom.ttf") format("opentype");
+}
+
+body {
+    background-color: #212529;
+    color: white;
+    font-family: "Alisa";
+    height: 100%;
+}
+
+
+#main-page .left-part {
+    background-color: white !important;
+    background: url("../imgs/dog.svg");
+    background-size: cover;
+    background-position-x: 100%;
+    color: black;
+    height: 110vh;
+}
+
+#main-page .right-part {
+    height: 100vh;
+}
+
+.centered {
+    position: relative;
+    padding: 30% 35%;
+}
+
+.main-page-btns {
+    position: relative;
+    padding: 30% 0%;
+}
+
+.login-form {
+    position: relative;
+    padding: 10% 30%;
+}
+
+#barks-page .container {
+    height: 100vh;
+}
+
+
+h1, h2, h3 {
+    color: #FFF;
+}
+
+#main-table textarea {
+    background-color: inherit;
+    color: white;
+    font-size: x-large;
+}
+
+#main-table textarea:focus {
+    border-color: red;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(255, 0, 0, 0.6);
+}
+
+.w-1 {
+  width: 1% !important;
+}
+
+a {
+    color: white;
+}
+
+a:hover {
+    color: #dc3545;
+}
+
+.img-thumbnail {
+    background-color: inherit;
+}
+
+td {
+    word-wrap:break-word;
+}
