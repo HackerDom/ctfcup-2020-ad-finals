@@ -66,7 +66,11 @@ namespace VaporService.Controllers
 
         private async Task Authenticate(string userName)
         {
-            var claims = new List<Claim> {new(ClaimsIdentity.DefaultNameClaimType, userName), new(ClaimsIdentity.DefaultRoleClaimType, "EmployeeOnly")};
+            var claims = new List<Claim>
+            {
+                new(ClaimsIdentity.DefaultNameClaimType, userName),
+                new(ClaimsIdentity.DefaultRoleClaimType, "EmployeeOnly")
+            };
             var id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
