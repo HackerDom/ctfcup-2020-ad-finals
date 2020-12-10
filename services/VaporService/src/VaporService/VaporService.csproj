@@ -13,6 +13,7 @@
         <PackageReference Include="Vostok.Commons.Time" Version="0.1.1-pre000027" />
         <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.19-pre000141" />
         <PackageReference Include="Vostok.Logging.Console" Version="1.0.5" />
+        <PackageReference Include="Vostok.Logging.File" Version="1.0.11" />
     </ItemGroup>
 
 </Project>

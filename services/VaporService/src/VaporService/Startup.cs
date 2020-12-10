@@ -11,6 +11,8 @@ using VaporService.Models;
 using VaporService.Storages;
 using Vostok.Logging.Abstractions;
 using Vostok.Logging.Console;
+using Vostok.Logging.File;
+using Vostok.Logging.File.Configuration;
 
 namespace VaporService
 {
@@ -26,7 +28,10 @@ namespace VaporService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var log = new ConsoleLog();
+            var log = new FileLog(() => new FileLogSettings
+            {
+                FilePath = "./data/log"
+            });
             var settingsProvider = new SettingsProvider();
             services.AddSingleton<ISettingsProvider>(settingsProvider);
             services.AddSingleton<ILog>(log);

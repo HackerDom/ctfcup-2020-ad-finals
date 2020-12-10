@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  vaporservice:
+    image: vaporservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "9000:9000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

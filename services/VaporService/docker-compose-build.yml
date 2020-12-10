@@ -1,0 +1,9 @@
+version: '3'
+services:
+  qexecution:
+    container_name: vaporservice-build
+    build:
+      context: .
+      dockerfile: Dockerfile-build
+    volumes:
+      - ./publish:/app/publish
