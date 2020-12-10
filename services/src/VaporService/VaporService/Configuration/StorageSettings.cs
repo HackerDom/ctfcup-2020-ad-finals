@@ -5,11 +5,12 @@ namespace VaporService.Configuration
 {
     internal class StorageSettings
     {
-        public string UserStorageFolder { get; } = "./data/users/";
-        public string WeaponStorageFolder { get; } = "./data/weapon/";
-        public string WeaponIndexFolder { get; } = "./data/userIndex";
+        public string UserStorageFolder { get; } = "./data/fighters";
+        public string WeaponStorageFolder { get; } = "./data/weapon";
+        public string JabberwockyStorageFolder { get; } = "./data/jabberwocky";
+        public string WeaponIndexPath { get; } = "./data/userIndex";
         public TimeSpan WeaponIndexDumpPeriod { get; } = 2.Seconds();
-
-        public TimeSpan WeaponTTL { get; } = 5.Seconds();
+        public TimeSpan WeaponStorageCleanupPeriod { get; } = 10.Minutes();
+        public TimeSpan WeaponTTL { get; } = 10.Minutes();
     }
 }

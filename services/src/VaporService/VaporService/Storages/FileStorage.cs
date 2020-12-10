@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace VaporService.Storages
@@ -7,6 +9,9 @@ namespace VaporService.Storages
     internal abstract class FileStorage<TKey, TValue> : IStorage<TKey, TValue>
     {
         protected abstract string StorageFolder { get; }
+
+        public IEnumerable<TKey> GetKeys() =>
+            Directory.GetFiles(StorageFolder).Select(path => MapFileNameToKey(Path.GetFileName(path)));
 
         public Task Put(TKey key, TValue entity, bool overwrite = true)
         {
@@ -44,6 +49,7 @@ namespace VaporService.Storages
         }
 
         protected abstract string MapKeyToFileName(TKey key);
+        protected abstract TKey MapFileNameToKey(string fileName);
         protected abstract byte[] MapContentToBytes(TValue value);
         protected abstract TValue MapBytesToContent(byte[] bytesToValue);
     }

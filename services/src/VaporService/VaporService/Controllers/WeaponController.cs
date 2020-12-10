@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VaporService.Helpers;
 using VaporService.Storages;
 
 namespace VaporService.Controllers
@@ -18,7 +19,10 @@ namespace VaporService.Controllers
             _weaponStorage = weaponStorage;
         }
 
-        //TODO: add list
+        [Authorize]
+        [HttpGet]
+        [Route("weaponList")]
+        public IActionResult GetWeaponList() => Ok(_weaponStorage.GetKeys().ToJson());
 
         [Authorize]
         [HttpPut]
@@ -31,7 +35,7 @@ namespace VaporService.Controllers
             _claimedWeaponIndex.ClaimWeapon(weapon.Name, User?.Identity?.Name);
             await _weaponStorage.Put(weapon.Name, weapon);
 
-            return Ok(await _weaponStorage.Get(weapon.Name));
+            return Ok();
         }
 
         [HttpPut]
@@ -39,7 +43,7 @@ namespace VaporService.Controllers
         public async Task<IActionResult> PutSharedWeapon(Weapon weapon)
         {
             await _weaponStorage.Put(weapon.Name, weapon);
-            return Ok(_weaponStorage.Get(weapon.Name));
+            return Ok();
         }
 
         [HttpGet]
@@ -50,7 +54,8 @@ namespace VaporService.Controllers
                 !_claimedWeaponIndex.IsOwner(User?.Identity?.Name, request.WeaponName))
                 return Forbid();
 
-            return Ok(await _weaponStorage.Get(request.WeaponName));
+            var weapon = await _weaponStorage.Get(request.WeaponName);
+            return Ok(weapon.ToJson());
         }
 
         public class GetWeaponRequest

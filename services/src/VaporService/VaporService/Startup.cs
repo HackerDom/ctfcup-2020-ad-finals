@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using VaporService.Configuration;
-using VaporService.Helpers;
+using VaporService.Controllers;
 using VaporService.Models;
 using VaporService.Storages;
 using Vostok.Logging.Abstractions;
@@ -26,12 +26,13 @@ namespace VaporService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var log = new ConsoleLog();
             var settingsProvider = new SettingsProvider();
             services.AddSingleton<ISettingsProvider>(settingsProvider);
-            services.AddSingleton<ILog>(new ConsoleLog());
+            services.AddSingleton<ILog>(log);
+            services.AddSingleton<IFightForecaster, FightForecaster>();
 
-            AddUserStorage(services, settingsProvider);
-            AddWeaponStorage(services, settingsProvider);
+            AddStorages(services, settingsProvider);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -40,29 +41,22 @@ namespace VaporService
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-            services.AddAuthorization(options =>
-            {
-                //options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
-            });
+            services.AddAuthorization();
         }
 
-        private static void AddUserStorage(IServiceCollection services, SettingsProvider settingsProvider)
-        {
-            services.AddSingleton<IStorage<string, UserData>, GenericFileStorage<string, UserData>>();
-            services.AddSingleton<IEntityMapper<string, UserData>>(new EntityMapper<string, UserData>(s => s,
-                data => data.ToBytes(),
-                bytes => bytes.FromBytes<UserData>(),
-                () => settingsProvider.StorageSettings.UserStorageFolder));
-        }
 
-        private static void AddWeaponStorage(IServiceCollection services, SettingsProvider settingsProvider)
+        private static void AddStorages(IServiceCollection services, SettingsProvider settingsProvider)
         {
             services.AddSingleton<IClaimedWeaponIndex, ClaimedWeaponIndex>();
+            
+            services.AddSingleton<IStorage<string, Fighter>, GenericFileStorage<string, Fighter>>();
+            services.AddSingleton<IEntityMapper<string, Fighter>>(new JsonMapper<Fighter>(() => settingsProvider.StorageSettings.UserStorageFolder));
+            
             services.AddSingleton<IStorage<string, Weapon>, GenericFileStorage<string, Weapon>>();
-            services.AddSingleton<IEntityMapper<string, Weapon>>(new EntityMapper<string, Weapon>(s => s,
-                data => data.ToBytes(),
-                bytes => bytes.FromBytes<Weapon>(),
-                () => settingsProvider.StorageSettings.WeaponStorageFolder));
+            services.AddSingleton<IEntityMapper<string, Weapon>>(new JsonMapper<Weapon>(() => settingsProvider.StorageSettings.WeaponStorageFolder));
+            
+            services.AddSingleton<IStorage<string, Jabberwocky>, GenericFileStorage<string, Jabberwocky>>();
+            services.AddSingleton<IEntityMapper<string, Jabberwocky>>(new JsonMapper<Jabberwocky>(() => settingsProvider.StorageSettings.JabberwockyStorageFolder));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -13,9 +13,9 @@ namespace VaporService.Controllers
     [Route("[controller]")]
     public class AccountController : Controller
     {
-        private readonly IStorage<string, UserData> _userStorage;
+        private readonly IStorage<string, Fighter> _userStorage;
 
-        public AccountController(IStorage<string, UserData> userStorage)
+        public AccountController(IStorage<string, Fighter> userStorage)
         {
             _userStorage = userStorage;
         }
@@ -49,7 +49,7 @@ namespace VaporService.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserData model)
+        public async Task<IActionResult> Register(Fighter model)
         {
             if (!ModelState.IsValid)
             {

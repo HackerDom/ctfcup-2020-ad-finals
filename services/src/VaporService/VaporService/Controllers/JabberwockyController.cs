@@ -1,7 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VaporService.Helpers;
 using VaporService.Storages;
 
 namespace VaporService.Controllers
@@ -12,67 +12,63 @@ namespace VaporService.Controllers
     public class JabberwockyController : ControllerBase
     {
         private readonly IStorage<string, Weapon> _weaponStorage;
-        private readonly Random _random;
-        private readonly IStorage<string, Jabberwocky> jabberwockyStorage;
+        private readonly IStorage<string, Jabberwocky> _jabberwockyStorage;
+        private readonly IFightForecaster _fightForecaster;
 
         public JabberwockyController(IStorage<string, Jabberwocky> jabberwockyStorage,
-            IStorage<string, Weapon> weaponStorage)
+            IStorage<string, Weapon> weaponStorage, IFightForecaster fightForecaster)
         {
-            this.jabberwockyStorage = jabberwockyStorage;
+            _jabberwockyStorage = jabberwockyStorage;
             _weaponStorage = weaponStorage;
-            _random = new Random();
+            _fightForecaster = fightForecaster;
         }
 
         [Authorize]
+        [HttpPut]
+        [Route("jabberwocky")]
         public async Task<IActionResult> PutJabberwocky(Jabberwocky jabberwocky)
         {
-            await jabberwockyStorage.Put(jabberwocky.BreedingSeed, jabberwocky);
+            await _jabberwockyStorage.Put(jabberwocky.BreedingSeed, jabberwocky);
             return Ok();
         }
 
         [Authorize]
+        [HttpGet]
+        [Route("jabberwocky")]
         public async Task<IActionResult> GetJabberwocky(GetJabberwockyRequest request)
         {
-            var result = await jabberwockyStorage.Get(request.BreedingSeed);
-            if (result == null)
+            var jabberwocky = await _jabberwockyStorage.Get(request.BreedingSeed);
+            if (jabberwocky == null)
                 return NotFound();
 
-            return Ok(result);
+            return Ok(jabberwocky.ToJson());
         }
 
         [Authorize]
-        public async Task<IActionResult> CanDefeatJabberwocky(DefateTestRequest request)
+        [HttpPut]
+        [Route("weaponTestResult")]
+        public async Task<IActionResult> TestWeapon(TestWeaponRequest weaponRequest)
         {
-            var result = await jabberwockyStorage.Get(request.BreedingSeed);
-            var weapon = await _weaponStorage.Get(request.WeaponName);
-            if (weapon.IsVorpal && _random.Next(0, 100) < 5)
-                return Ok(true);
-
-            if (weapon.Property.Contains("sudo"))
-                return Ok(true);
-
-            if (string.Compare(weapon.ArcaneProperty, result.ArcaneProperty, StringComparison.Ordinal) < 0)
-                return Ok(false);
-
-            if (result.IsHasClawsThatCatch ^ result.IsHasJawsThatBite && _random.Next(0, 100) < 50)
-                return Ok(true);
-
-            if (result.IsHasClawsThatCatch && result.IsHasJawsThatBite)
-                return Ok(false);
-
-            return Ok(true);
+            var jabberwocky = await _jabberwockyStorage.Get(weaponRequest.BreedingSeed);
+            var weapon = await _weaponStorage.Get(weaponRequest.WeaponName);
+            return Ok(Test(weapon, jabberwocky).ToJson());
         }
+
+        private IActionResult Test(Weapon weapon, Jabberwocky jabberwocky) => Ok(_fightForecaster.Forecast(weapon, jabberwocky).ToJson());
+
+        [Authorize]
+        [HttpGet]
+        [Route("jabberwockyList")]
+        public IActionResult GetJabberwockyList() => Ok(_jabberwockyStorage.GetKeys());
 
         public class GetJabberwockyRequest
         {
             public string BreedingSeed { get; set; }
         }
 
-        public class DefateTestRequest : GetJabberwockyRequest
+        public class TestWeaponRequest : GetJabberwockyRequest
         {
             public string WeaponName { get; set; }
         }
-
-        //TODO: add list
     }
 }
