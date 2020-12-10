@@ -40,7 +40,7 @@ module "cs-worker" {
   resources = local.resources
   image_id = module.c.ubuntu-with-docker.id
   subnet_id = module.c.subnet_id
-  ip_address = cidrhost(module.c.jury_subnet, 10)
+  ip_address = cidrhost(module.c.jury_subnet, 11)
   metadata = {
     ssh-keys = "ubuntu:${module.c.jury_ssh_key}"
   }
