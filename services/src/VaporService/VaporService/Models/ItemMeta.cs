@@ -1,8 +1,8 @@
 using System;
 
-namespace VaporService.Storages
+namespace VaporService.Models
 {
-    internal class WeaponMeta
+    internal class ItemMeta
     {
         public string Owner;
         public DateTime ExpireAt { get; set; }

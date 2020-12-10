@@ -1,64 +1,71 @@
 using System;
-using VaporService.Storages;
-using Vostok.Logging.Abstractions;
+using VaporService.Helpers;
+using VaporService.Models;
 
-namespace VaporService.Controllers
+namespace VaporService
 {
     class FightForecaster : IFightForecaster
     {
-        private readonly ILog _log;
         private readonly Random _random;
 
-        public FightForecaster(ILog log)
+        public FightForecaster()
         {
-            _log = log;
             _random = new Random();
         }
 
+        
         public Report Forecast(Weapon weapon, Jabberwocky jabberwocky)
         {
+            if (weapon.IsVorpal)
+                return CheckForVorpalWeapon(jabberwocky);
 
-            if (weapon.IsVorpal && _random.Next(0, 100) < 5)
+            if (weapon.Force > jabberwocky.Force)
+                return new Report()
+                {
+                    Reason = "OK. Fighter wins",
+                    JabberwockyDefeated = true
+                };
+
+            if (weapon.Force < jabberwocky.Force)
+                return new Report()
+                {
+                    Reason = "KO. Jabberwocky wins",
+                    JabberwockyDefeated = false
+                };
+
+            if (Math.Abs(weapon.Force - jabberwocky.Force) < Double.Epsilon)
+                return new Report()
+                {
+                    Reason = "OK. Fighter wins, but not sure",
+                    JabberwockyDefeated = true
+                };
+
+
+            throw new ArgumentException("Unpredictable jabberwocky or weapon", $"{jabberwocky} {weapon}");
+        }
+
+        private Report CheckForVorpalWeapon(Jabberwocky jabberwocky)
+        {
+            if (_random.Next(0, 100) < 5)
+            {
                 return new Report
                 {
                     Reason = "Beheaded",
                     JabberwockyDefeated = true
                 };
+            }
 
-            if (weapon.Property.Contains("sudo"))
-                return new Report
-                {
-                    Reason = "cheat",
-                    JabberwockyDefeated = true
-                };
-
-            if (weapon.ArcaneProperty.CompareTo(jabberwocky.ArcaneProperty) < 0)
-                return new Report
-                {
-                    Reason = "Weak arcane property",
-                    JabberwockyDefeated = true
-                };
-
-            if (jabberwocky.HasClawsThatCatch ^ jabberwocky.HasJawsThatBite && _random.Next(0, 100) < 50)
+            if (!jabberwocky.HasClawsThatCatch ^ jabberwocky.HasJawsThatBite && _random.Next(0, 100) < 50)
                 return new Report
                 {
                     Reason = "Luck",
                     JabberwockyDefeated = true
                 };
-            ;
-
-            if (jabberwocky.HasClawsThatCatch && jabberwocky.HasJawsThatBite)
-                return new Report
-                {
-                    Reason = "KO. Jabberwocky wins",
-                    JabberwockyDefeated = true
-                };
-            ;
 
             return new Report
             {
-                Reason = "Good always triumphs over evil",
-                JabberwockyDefeated = true
+                Reason = "KO. Jabberwocky wins",
+                JabberwockyDefeated = false
             };
         }
     }

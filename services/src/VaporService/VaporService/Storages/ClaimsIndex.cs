@@ -3,28 +3,29 @@ using System.Collections.Concurrent;
 using System.IO;
 using VaporService.Configuration;
 using VaporService.Helpers;
+using VaporService.Models;
 using Vostok.Commons.Time;
 using Vostok.Logging.Abstractions;
 
 namespace VaporService.Storages
 {
-    internal class ClaimedWeaponIndex : IClaimedWeaponIndex
+    internal class ClaimsIndex : IClaimesIndex
     {
         private AsyncPeriodicalAction _dump;
         private readonly ILog _log;
         private readonly ISettingsProvider _settingsProvider;
-        private readonly ConcurrentDictionary<string, WeaponMeta> _weaponByName;
+        private readonly ConcurrentDictionary<string, ItemMeta> _itemByName;
         private PeriodicalAction _cleanup;
 
-        public ClaimedWeaponIndex(ISettingsProvider settingsProvider, ILog log)
+        public ClaimsIndex(ISettingsProvider settingsProvider, ILog log)
         {
             _settingsProvider = settingsProvider;
             _log = log;
             if (File.Exists(_settingsProvider.StorageSettings.WeaponIndexPath))
-                _weaponByName = File.ReadAllText(_settingsProvider.StorageSettings.WeaponIndexPath)
-                    .FromJson<ConcurrentDictionary<string, WeaponMeta>>();
+                _itemByName = File.ReadAllText(_settingsProvider.StorageSettings.WeaponIndexPath)
+                    .FromJson<ConcurrentDictionary<string, ItemMeta>>();
             else
-                _weaponByName = new ConcurrentDictionary<string, WeaponMeta>();
+                _itemByName = new ConcurrentDictionary<string, ItemMeta>();
             
             StartDaemons(settingsProvider);
         }
@@ -38,17 +39,14 @@ namespace VaporService.Storages
                         Directory.CreateDirectory(settingsProvider.StorageSettings.WeaponIndexPath);
                     
                     await File.WriteAllTextAsync(settingsProvider.StorageSettings.WeaponIndexPath,
-                        _weaponByName.ToJson());
+                        _itemByName.ToJson());
                 }, exception => _log.Error(exception, "Can't dump index"),
-                () => settingsProvider.StorageSettings.WeaponIndexDumpPeriod);
+                () => settingsProvider.StorageSettings.IndexDumpPeriod);
             _cleanup = new PeriodicalAction(() =>
                 {
-                    if (!Directory.Exists(settingsProvider.StorageSettings.WeaponIndexPath))
-                        return;
-                    
-                    foreach (var pair in _weaponByName.ToArray())
-                        if (pair.Value.ExpireAt >= DateTime.UtcNow)
-                            _weaponByName.TryRemove(pair.Key, out _);
+                    foreach (var pair in _itemByName.ToArray())
+                        if (pair.Value.ExpireAt <= DateTime.UtcNow)
+                            _itemByName.TryRemove(pair.Key, out _);
                 }, exception => _log.Error(exception, "can't cleanup"),
                 () => _settingsProvider.StorageSettings.WeaponStorageCleanupPeriod
             );
@@ -58,7 +56,7 @@ namespace VaporService.Storages
 
         public bool ClaimWeapon(string weaponName, string userName)
         {
-            return _weaponByName.TryAdd(weaponName, new WeaponMeta
+            return _itemByName.TryAdd(weaponName, new ItemMeta
             {
                 Owner = userName,
                 ExpireAt = DateTime.UtcNow + _settingsProvider.StorageSettings.WeaponTTL
@@ -67,12 +65,12 @@ namespace VaporService.Storages
 
         public bool IsClaimed(string weaponName)
         {
-            return _weaponByName.ContainsKey(weaponName);
+            return _itemByName.ContainsKey(weaponName);
         }
 
         public bool IsOwner(string userName, string weaponName)
         {
-            return _weaponByName.TryGetValue(weaponName, out var meta) && meta.Owner.Equals(userName);
+            return _itemByName.TryGetValue(weaponName, out var meta) && meta.Owner.Equals(userName);
         }
     }
 }

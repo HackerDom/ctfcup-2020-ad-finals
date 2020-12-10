@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaporService.Helpers;
+using VaporService.Models;
 using VaporService.Storages;
 
 namespace VaporService.Controllers
@@ -33,13 +34,17 @@ namespace VaporService.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("jabberwocky")]
         public async Task<IActionResult> GetJabberwocky(GetJabberwockyRequest request)
         {
+            
             var jabberwocky = await _jabberwockyStorage.Get(request.BreedingSeed);
             if (jabberwocky == null)
                 return NotFound();
+            
+            if (!jabberwocky.Breeder.Equals(User.Identity.Name))
+                return StatusCode(403, "not your jabberwocky");
 
             return Ok(jabberwocky.ToJson());
         }
@@ -51,10 +56,9 @@ namespace VaporService.Controllers
         {
             var jabberwocky = await _jabberwockyStorage.Get(weaponRequest.BreedingSeed);
             var weapon = await _weaponStorage.Get(weaponRequest.WeaponName);
-            return Ok(Test(weapon, jabberwocky).ToJson());
-        }
 
-        private IActionResult Test(Weapon weapon, Jabberwocky jabberwocky) => Ok(_fightForecaster.Forecast(weapon, jabberwocky).ToJson());
+            return Ok(_fightForecaster.Forecast(weapon, jabberwocky).ToJson());
+        }
 
         [Authorize]
         [HttpGet]

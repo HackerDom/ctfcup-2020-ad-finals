@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VaporService.Helpers;
+using VaporService.Models;
 using VaporService.Storages;
 
 namespace VaporService.Controllers
@@ -10,12 +11,12 @@ namespace VaporService.Controllers
     [Route("[controller]")]
     public class WeaponController : ControllerBase
     {
-        private readonly IClaimedWeaponIndex _claimedWeaponIndex;
+        private readonly IClaimesIndex _claimesIndex;
         private readonly IStorage<string, Weapon> _weaponStorage;
 
-        public WeaponController(IClaimedWeaponIndex claimedWeaponIndex, IStorage<string, Weapon> weaponStorage)
+        public WeaponController(IClaimesIndex claimesIndex, IStorage<string, Weapon> weaponStorage)
         {
-            _claimedWeaponIndex = claimedWeaponIndex;
+            _claimesIndex = claimesIndex;
             _weaponStorage = weaponStorage;
         }
 
@@ -26,33 +27,32 @@ namespace VaporService.Controllers
 
         [Authorize]
         [HttpPut]
-        [Route("claimed/weapon")]
+        [Route("claimed")]
         public async Task<IActionResult> PutClaimedWeapon(Weapon weapon)
         {
-            if (!_claimedWeaponIndex.ClaimWeapon(User?.Identity?.Name, weapon.Name))
-                return Forbid("Already claimed");
+            if (!_claimesIndex.ClaimWeapon(weapon.Name, User?.Identity?.Name))
+                return Conflict("Already claimed");
 
-            _claimedWeaponIndex.ClaimWeapon(weapon.Name, User?.Identity?.Name);
             await _weaponStorage.Put(weapon.Name, weapon);
 
             return Ok();
         }
 
         [HttpPut]
-        [Route("shared/weapon")]
+        [Route("shared")]
         public async Task<IActionResult> PutSharedWeapon(Weapon weapon)
         {
             await _weaponStorage.Put(weapon.Name, weapon);
             return Ok();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("weapon")]
         public async Task<IActionResult> GetWeapon(GetWeaponRequest request)
         {
-            if (_claimedWeaponIndex.IsClaimed(request.WeaponName) &&
-                !_claimedWeaponIndex.IsOwner(User?.Identity?.Name, request.WeaponName))
-                return Forbid();
+            if (_claimesIndex.IsClaimed(request.WeaponName) &&
+                !_claimesIndex.IsOwner(User?.Identity?.Name, request.WeaponName))
+                return StatusCode(403);
 
             var weapon = await _weaponStorage.Get(request.WeaponName);
             return Ok(weapon.ToJson());

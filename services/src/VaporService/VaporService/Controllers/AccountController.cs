@@ -38,7 +38,7 @@ namespace VaporService.Controllers
             }
 
             IncorrectCredentials();
-            return Forbid();
+            return StatusCode(403);
         }
 
         private void IncorrectCredentials()
@@ -77,6 +77,7 @@ namespace VaporService.Controllers
         }
 
         [HttpGet]
+        [Route("logout")]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

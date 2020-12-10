@@ -13,11 +13,13 @@ namespace VaporService.Storages
         public IEnumerable<TKey> GetKeys() =>
             Directory.GetFiles(StorageFolder).Select(path => MapFileNameToKey(Path.GetFileName(path)));
 
-        public Task Put(TKey key, TValue entity, bool overwrite = true)
+        public Task Put(TKey key, TValue entity)
         {
             if (!Directory.Exists(StorageFolder)) Directory.CreateDirectory(StorageFolder);
-
             var path = GetPath(key);
+            if (File.Exists(path))
+                throw new ArgumentException("Already exist");
+
             return File.WriteAllBytesAsync(path, MapContentToBytes(entity));
         }
 

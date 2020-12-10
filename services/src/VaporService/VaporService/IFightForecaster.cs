@@ -1,6 +1,6 @@
-using VaporService.Storages;
+using VaporService.Models;
 
-namespace VaporService.Controllers
+namespace VaporService
 {
     public interface IFightForecaster
     {

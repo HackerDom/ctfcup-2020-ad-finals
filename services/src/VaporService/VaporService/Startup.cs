@@ -47,7 +47,7 @@ namespace VaporService
 
         private static void AddStorages(IServiceCollection services, SettingsProvider settingsProvider)
         {
-            services.AddSingleton<IClaimedWeaponIndex, ClaimedWeaponIndex>();
+            services.AddSingleton<IClaimesIndex, ClaimsIndex>();
             
             services.AddSingleton<IStorage<string, Fighter>, GenericFileStorage<string, Fighter>>();
             services.AddSingleton<IEntityMapper<string, Fighter>>(new JsonMapper<Fighter>(() => settingsProvider.StorageSettings.UserStorageFolder));

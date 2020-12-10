@@ -1,6 +1,6 @@
 namespace VaporService.Storages
 {
-    public interface IClaimedWeaponIndex
+    public interface IClaimesIndex
     {
         bool ClaimWeapon(string userName, string weaponName);
         bool IsClaimed(string weaponName);

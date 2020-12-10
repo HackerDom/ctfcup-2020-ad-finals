@@ -1,4 +1,4 @@
-namespace VaporService.Controllers
+namespace VaporService.Models
 {
     public class Report
     {
