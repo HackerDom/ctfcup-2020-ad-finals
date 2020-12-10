@@ -4,5 +4,6 @@ provider "yandex" {
 
 module "c" {
   source = "../common/"
-  resolve_subnet = false
 }
+
+
