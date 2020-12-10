@@ -96,7 +96,7 @@ def show_friends(request):
     return render(request, 'main/friends.html', {'user_friends_info': get_user_friends_info(request.user)})
 
 
-@require_POST
+@require_GET
 @login_required(login_url="/")
 def add_friend(request, username):
     user = User.objects.filter(username=username).first()
@@ -106,7 +106,7 @@ def add_friend(request, username):
     return HttpResponseRedirect("/friends/")
 
 
-@require_POST
+@require_GET
 @login_required(login_url="/")
 def confirm_friend(request, username):
     user = User.objects.filter(username=username).first()
@@ -117,7 +117,7 @@ def confirm_friend(request, username):
     return HttpResponseRedirect("/friends/")
 
 
-@require_POST
+@require_GET
 @login_required(login_url="/")
 def revoke_friend(request, username):
     user = User.objects.filter(username=username).first()

@@ -14,8 +14,8 @@ urlpatterns = [
     path('friends/', views.show_friends, name="show_friends"),
     path('profile/', views.get_profile, name="get_profile"),
     path('generate_token/', views.generate_token, name="generate_token"),
-    path('confirm_friend/<str:username>', views.confirm_friend, name="confirm_friend"),
-    path('revoke_friend/<str:username>', views.revoke_friend, name="revoke_friend"),
+    path('confirm_friend/<str:username>/', views.confirm_friend, name="confirm_friend"),
+    path('revoke_friend/<str:username>/', views.revoke_friend, name="revoke_friend"),
     path('add_friend/<str:username>', views.add_friend, name="add_friend"),
     path('<str:username>/', views.get_barks, name="get_barks"),
 ]
