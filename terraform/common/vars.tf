@@ -25,7 +25,7 @@ output "teams_path" {
   value = local.teams_path
 }
 
-output "dev_ssh_key" {
+output "jury_ssh_key" {
   value = file("${local.teams_path}/for_devs.ssh_key.pub")
 }
 

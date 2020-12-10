@@ -41,7 +41,7 @@ resource "yandex_compute_instance" "deployer" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${module.c.dev_ssh_key}"
+    ssh-keys = "ubuntu:${module.c.jury_ssh_key}"
     user-data = file("${path.module}/templates/setup_deployer.sh")
   }
 }

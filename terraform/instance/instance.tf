@@ -7,7 +7,8 @@ variable "name" {
 }
 
 variable "resources" {
-  type = map
+  # most of args are actually numbers... but this is terraform so double-coversions are the least of my troubles
+  type = map(string)
 }
 
 variable "image_id" {
@@ -27,7 +28,7 @@ variable "ip_address" {
 }
 
 variable "metadata" {
-  type = map
+  type = map(string)
 }
 
 resource "yandex_compute_instance" "i" {

@@ -1,17 +1,23 @@
-locals {
-  resources = {
-    cores => 4,
-    core_fraction => 20,
-    memory => 8,
-    disk_size => 50,
+variable "dev_resources" {
+  default = {
+    cores = 4,
+    core_fraction = 20,
+    memory = 8,
+    disk_size = 50,
   }
+}
 
-  prod_resources = {
-    cores  => 16,
-    memory => 32,
-    core_fraction => 100,
-    disk_size => 100,
+variable "prod_resources" {
+  default = {
+    cores  = 16,
+    memory = 32,
+    core_fraction = 100,
+    disk_size = 100,
   }
+}
+
+locals {
+  resources = var.dev_resources
 }
 
 module "cs-main" {
@@ -23,7 +29,7 @@ module "cs-main" {
   subnet_id = module.c.subnet_id
   ip_address = cidrhost(module.c.jury_subnet, 10)
   metadata = {
-    ssh-keys = "ubuntu:${local.jury_ssh_key}"
+    ssh-keys = "ubuntu:${module.c.jury_ssh_key}"
   }
 }
 
@@ -36,7 +42,7 @@ module "cs-worker" {
   subnet_id = module.c.subnet_id
   ip_address = cidrhost(module.c.jury_subnet, 10)
   metadata = {
-    ssh-keys = "ubuntu:${local.jury_ssh_key}"
+    ssh-keys = "ubuntu:${module.c.jury_ssh_key}"
   }
 }
 
@@ -51,7 +57,7 @@ module "proxy" {
   subnet_id = module.c.subnet_id
   ip_address = cidrhost(module.c.jury_subnet, 20 + count.index)
   metadata = {
-    ssh-keys = "ubuntu:${local.jury_ssh_key}"
+    ssh-keys = "ubuntu:${module.c.jury_ssh_key}"
   }
 }
 

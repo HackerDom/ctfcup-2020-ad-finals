@@ -4,6 +4,7 @@ variable "resolve_subnet" {
 
 data "yandex_vpc_subnet" "subnet" {
   count = var.resolve_subnet ? 1 : 0
+  name = "ctf-subnet"
 }
 
 output "subnet_id" {
