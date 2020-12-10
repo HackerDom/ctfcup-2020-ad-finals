@@ -38,6 +38,9 @@
                                     <div class="col-sm-10"><h3><b>
                                         {{ bark.user.first_name }} {{ bark.user.last_name }}
                                         <a href="/{{bark.user.username}}">@{{ bark.user.username }}</a></b>
+                                        {% if bark.is_private %}
+                                        <div class="d-inline float-right btn btn-danger">private</div>
+                                        {% endif %}
                                         <hr>
                                         {{ bark.text }}</h3>
                                     </div>

@@ -39,4 +39,5 @@ def get_user_friends_info(user):
 
 def is_friends(fuser, suser):
     return Friendship.objects.filter(first_user=fuser, second_user=suser, status=True).first() or \
-           Friendship.objects.filter(first_user=suser, second_user=fuser, status=True).first()
+           Friendship.objects.filter(first_user=suser, second_user=fuser, status=True).first() or \
+           fuser == suser
