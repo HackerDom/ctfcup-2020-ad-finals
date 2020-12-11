@@ -20,7 +20,7 @@ class Comment(models.Model):
 class Friendship(models.Model):
     first_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="fuser")
     second_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="suser")
-    status = models.BooleanField(default=False) # do True for vuln
+    status = models.BooleanField(default=True)
 
 
 class Token(models.Model):

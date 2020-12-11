@@ -65,7 +65,7 @@ def get_users(request, page_n):
     if page_n < 0:
         page_n = 0
     offset = 20
-    users = User.objects.order_by("username")[page_n * offset:(page_n + 1) * offset]
+    users = User.objects.order_by("-date_joined")[page_n * offset:(page_n + 1) * offset]
     user_list = []
     for user in users:
         user_list.append({

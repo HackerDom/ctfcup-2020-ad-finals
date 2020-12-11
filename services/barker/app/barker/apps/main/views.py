@@ -68,7 +68,8 @@ def get_barks(request, username):
     return render(request, 'main/barks.html', {'barks': barks,
                                                'requested_user': user,
                                                'new_barks': new_barks,
-                                               'is_friend': is_friends(request.user, user)})
+                                               'is_friend': is_friends(request.user, user)
+                                               if request.user.is_authenticated else False})
 
 
 @require_GET
