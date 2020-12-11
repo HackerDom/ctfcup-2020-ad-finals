@@ -3,7 +3,7 @@ cs_dir:  /home/cs/checksystem
 cs_scoreboard_dir: /home/cs/ctf-scoreboard-client
 
 pg_cs_user: cs
-pg_cs_pass: nHWcRDCyZlqIid
+pg_cs_pass: LcgHZnBFTHtydHhE
 pg_cs_db: cs
 pg_cs_host: 10.118.0.10
 pg_cs_port: 5432
