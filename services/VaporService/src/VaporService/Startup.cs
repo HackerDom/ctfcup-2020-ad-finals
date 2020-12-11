@@ -53,33 +53,27 @@ namespace VaporService
         private static void AddStorages(IServiceCollection services, SettingsProvider settingsProvider)
         {
             services.AddSingleton<IClaimesIndex, ClaimsIndex>();
-            
+
             services.AddSingleton<IStorage<string, Fighter>, GenericFileStorage<string, Fighter>>();
-            services.AddSingleton<IEntityMapper<string, Fighter>>(new JsonMapper<Fighter>(() => settingsProvider.StorageSettings.UserStorageFolder));
-            
+            services.AddSingleton<IEntityMapper<string, Fighter>>(
+                new JsonMapper<Fighter>(() => settingsProvider.StorageSettings.UserStorageFolder));
+
             services.AddSingleton<IStorage<string, Weapon>, GenericFileStorage<string, Weapon>>();
-            services.AddSingleton<IEntityMapper<string, Weapon>>(new JsonMapper<Weapon>(() => settingsProvider.StorageSettings.WeaponStorageFolder));
-            
+            services.AddSingleton<IEntityMapper<string, Weapon>>(new JsonMapper<Weapon>(() =>
+                settingsProvider.StorageSettings.WeaponStorageFolder));
+
             services.AddSingleton<IStorage<string, Jabberwocky>, GenericFileStorage<string, Jabberwocky>>();
-            services.AddSingleton<IEntityMapper<string, Jabberwocky>>(new JsonMapper<Jabberwocky>(() => settingsProvider.StorageSettings.JabberwockyStorageFolder));
+            services.AddSingleton<IEntityMapper<string, Jabberwocky>>(
+                new JsonMapper<Jabberwocky>(() => settingsProvider.StorageSettings.JabberwockyStorageFolder));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "VaporService v1"));
-            }
-
-
+            app.UseDeveloperExceptionPage();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }

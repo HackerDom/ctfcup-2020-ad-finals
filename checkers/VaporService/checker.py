@@ -94,12 +94,12 @@ def put(put_request: PutRequest) -> Verdict:
     flag = put_request.flag
     try:
         user = Object()
-        user.name = utils.get_user_name()
+        user.name = utils.get_user_name() + utils.get_token()
         user.password = utils.get_user_pass()
         api.register(user.name, user.password)
 
         claimed = Object()
-        claimed.name = utils.get_string_range(5, 10)
+        claimed.name = utils.get_string_range(5, 10) + utils.get_token()
         claimed.isVorpal = randrange(0, 100) % 2 == 0
         claimed.force = randrange(0, 100)
         claimed.flag = flag
@@ -148,7 +148,7 @@ def put2(put_request: PutRequest) -> Verdict:
     flag = put_request.flag
     try:
         user = Object()
-        user.name = utils.get_user_name()
+        user.name = utils.get_user_name() + utils.get_token()
         user.password = utils.get_user_pass()
         api.register(user.name, user.password)
 

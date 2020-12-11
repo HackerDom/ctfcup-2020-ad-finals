@@ -151,6 +151,7 @@ class Api:
         return result.json()
 
     def retryable_requests(
+            self,
             retries=3,
             backoff_factor=0.3,
             status_forcelist=(400, 409, 500, 502, 504),
