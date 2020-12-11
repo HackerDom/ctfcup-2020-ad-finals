@@ -7,15 +7,9 @@ x = '0123456789abcdef'
 
 names = [
 'Команда Лучкиных Вячеславов',
-'N0N@me13',
 'C4T BuT S4D',
-'Импактный SUSlo.PAS',
-'Red Cadets',
-'Punk Souls',
 'SPRUSH',
 '♿️🅵🅰️🅺🅰️🅿️🅿️🅰️♿️',
-'SFT0',
-'Lunary',
 ]
 
 
