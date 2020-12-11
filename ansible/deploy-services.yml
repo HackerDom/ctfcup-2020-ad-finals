@@ -1,6 +1,9 @@
-- hosts: chessbase
+- hosts: vapor
   roles:
-    - { role: service, service_name: ChessBase }
+    - { role: service, service_name: VaporService }
+  tags:
+    - vapor
+    - VaporService
 
 - hosts: cubic
   roles:
