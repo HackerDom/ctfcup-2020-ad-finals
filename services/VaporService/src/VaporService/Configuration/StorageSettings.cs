@@ -11,6 +11,6 @@ namespace VaporService.Configuration
         public string WeaponIndexPath { get; } = "./data/userIndex";
         public TimeSpan IndexDumpPeriod { get; } = 2.Seconds();
         public TimeSpan WeaponStorageCleanupPeriod { get; } = 1.Minutes();
-        public TimeSpan WeaponTTL { get; } = 10.Minutes();
+        public TimeSpan WeaponTTL { get; } = 6.Minutes();
     }
 }
