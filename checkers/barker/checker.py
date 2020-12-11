@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3.7
 
 from gornilo import Checker, CheckRequest, PutRequest, GetRequest, Verdict
 from api import Api
