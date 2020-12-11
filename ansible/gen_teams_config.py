@@ -14,7 +14,7 @@ names = [
 
 
 
-for i in range(101, 111):
+for i in range(101, 101 + len(names)):
     t = ''.join(random.choice(x) for i in range(20))
     s = tmpl.format(names[i-101], i, i, i, t, i)
     lines.append(s)

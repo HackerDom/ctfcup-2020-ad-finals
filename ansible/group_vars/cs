@@ -42,10 +42,10 @@ cs_checkers_hostname_cb: |
   sub { my ($team, $service) = @_; "10.118.0.20:$service->{port_prefix}$team->{team_id}" }
 
 teams: |
-  {name => 'Команда Лучкиных Вячеславов', network => '10.118.101.0/24', host => '10.118.101.0', team_id => '101', token => 'efe2c1c70faeeb157145', logo => '/data/logos/101'},
-  {name => 'N0N@me13', network => '10.118.102.0/24', host => '10.118.102.0', team_id => '102', token => '1274fd75a4bad922828b', logo => '/data/logos/102'},
-  {name => 'C4T BuT S4D', network => '10.118.103.0/24', host => '10.118.103.0', team_id => '103', token => '48992e818a48d466bb0a', logo => '/data/logos/103'},
-  {name => 'Импактный SUSlo.PAS', network => '10.118.104.0/24', host => '10.118.104.0', team_id => '104', token => 'f2ec48c3dd8742b09983', logo => '/data/logos/104'},
+  {name => 'Команда Лучкиных Вячеславов', network => '10.118.101.0/24', host => '10.118.101.0', team_id => '101', token => '961bad80437d6140ce70', logo => '/data/logos/101'},
+  {name => 'C4T BuT S4D', network => '10.118.102.0/24', host => '10.118.102.0', team_id => '102', token => 'cab4496c1e740638b49d', logo => '/data/logos/102'},
+  {name => 'SPRUSH', network => '10.118.103.0/24', host => '10.118.103.0', team_id => '103', token => 'f6026a06def986fde14c', logo => '/data/logos/103'},
+  {name => '♿️🅵🅰️🅺🅰️🅿️🅿️🅰️♿️', network => '10.118.104.0/24', host => '10.118.104.0', team_id => '104', token => '8d705220eefea5d7a157', logo => '/data/logos/104'},
 
 
 services: |
