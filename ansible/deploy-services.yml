@@ -1,0 +1,14 @@
+- hosts: vapor
+  roles:
+    - { role: service, service_name: VaporService }
+  tags:
+    - vapor
+    - VaporService
+
+- hosts: cubic
+  roles:
+    - { role: service, service_name: cubic }
+
+- hosts: qexecute
+  roles:
+    - { role: service, service_name: QExecute }

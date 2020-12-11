@@ -1,0 +1,42 @@
+
+{%- for team_id in range(101, 101+10) %}
+
+{% set in_port = 1000 + team_id %}
+{% set out_port = 9000 %}
+
+server {
+    listen {{ in_port }};
+
+    access_log /var/log/nginx/proxy_{{in_port}}_access.log;
+    error_log /var/log/nginx/proxy_{{in_port}}_error.log;
+
+    location / {
+        proxy_pass http://10.118.{{ team_id }}.11:{{ out_port }};
+        proxy_set_header Host $http_host;
+        proxy_read_timeout 10;
+    }
+
+    client_max_body_size 2m;
+}
+
+## second service
+
+{% set in_port = 3000 + team_id %}
+{% set out_port = 9000 %}
+
+server {
+    listen {{ in_port }};
+
+    access_log /var/log/nginx/proxy_{{in_port}}_access.log;
+    error_log /var/log/nginx/proxy_{{in_port}}_error.log;
+
+    location / {
+        proxy_pass http://10.118.{{ team_id }}.13:{{ out_port }};
+        proxy_set_header Host $http_host;
+        proxy_read_timeout 10;
+    }
+
+    client_max_body_size 2m;
+}
+
+{%- endfor %}
