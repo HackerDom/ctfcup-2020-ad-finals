@@ -7,17 +7,6 @@ import hashlib
 
 FLAG_REGEXP = re.compile(r"[a-zA-Z0-9]{31}=")
 
-# Add API with two methods authorization
-# 1. Enumeration bark id (приватные barks) 
-# 2. Add to friend without confirm (приватные barks) 
-# 3. API через bark тянуть приватные комменты (приватные комменты)
-# 4. API-токен (barks и комменты)
-# 
-# N - Rate- Vulns
-# 1 - 2 - 1,2 (priv bark, pub comment) перебрать id, добавить в друзья
-# 2 - 1 - 3 (pub bark, priv comment) посмотреть комменты записи
-# 3 - 2 - 4 (private bark, private comment) подобрать token или добавить в друзья и посмотреть комменты
-
 def get_random_string(max_len:int = 20) -> str:
     return "".join(random.choices(string.ascii_letters+string.digits, k=random.randint(5, max_len)))
 
