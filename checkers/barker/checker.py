@@ -220,6 +220,7 @@ def put(put_request: PutRequest) -> Verdict:
         r = api.add_bark(username, bark, is_private=True)
         bark_id = int(r.text.split(bark)[0].split("/get_bark/")[1][0:-3])
         api.comment_bark(bark_id, put_request.flag, is_private=True)
+        token = api.generate_token()
         api.logout()
         return Verdict.OK(f"{username}:{password}:{bark_id}")
     except RequestException as e:
