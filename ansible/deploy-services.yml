@@ -1,14 +1,8 @@
 - hosts: vapor
   roles:
-    - { role: service, service_name: VaporService }
-  tags:
-    - vapor
-    - VaporService
+     - { role: service, service_name: VaporService, tags: [vapor] }
 
-- hosts: cubic
+- hosts: barker
   roles:
-    - { role: service, service_name: cubic }
+     - { role: service, service_name: barker, tags: [barker] }
 
-- hosts: qexecute
-  roles:
-    - { role: service, service_name: QExecute }

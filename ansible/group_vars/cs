@@ -50,5 +50,5 @@ teams: |
 
 services: |
   {name => 'VaporService', path => 'checkers/VaporService/checker.py', timeout => 30, port_prefix => '1'},
-  {name => 'cubic',     path => 'checkers/cubic/checker.py',     timeout => 30, port_prefix => '2'},
+  {name => 'barker',       path => 'checkers/barker/checker.py',       timeout => 30, port_prefix => '2'},
 
