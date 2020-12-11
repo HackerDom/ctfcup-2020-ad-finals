@@ -7,5 +7,6 @@ do
 done
 
 su barker
+python3 manage.py makemigration main
 python3 manage.py migrate
 python3 manage.py runserver 0.0.0.0:1337 --insecure
