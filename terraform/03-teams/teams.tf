@@ -12,7 +12,7 @@ variable "services" {
       "id": 1,
     },
     {
-      "name": "petuh",
+      "name": "barker",
       "template": "setup_empty.sh",
       "id": 2,
     },

@@ -21,8 +21,8 @@ server {
 
 ## second service
 
-{% set in_port = 3000 + team_id %}
-{% set out_port = 9000 %}
+{% set in_port = 2000 + team_id %}
+{% set out_port = 1337 %}
 
 server {
     listen {{ in_port }};
