@@ -47,7 +47,7 @@ resource "local_file" "AnsibleInventory" {
   content = templatefile("${path.module}/templates/inventory.tmpl", {
     services = {for i in range(length(var.services)): var.services[i].name => module.teams[*].service_ips[i]}
   })
-  filename = "../inventory"
+  filename = "../inventory/teams"
 }
 
 output "team_ids" {
