@@ -6,7 +6,7 @@ do
   sleep 1
 done
 
-su barker
 python3 manage.py makemigration main
 python3 manage.py migrate
+su barker
 python3 manage.py runserver 0.0.0.0:1337 --insecure
