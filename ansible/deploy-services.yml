@@ -1,0 +1,11 @@
+- hosts: chessbase
+  roles:
+    - { role: service, service_name: ChessBase }
+
+- hosts: cubic
+  roles:
+    - { role: service, service_name: cubic }
+
+- hosts: qexecute
+  roles:
+    - { role: service, service_name: QExecute }
