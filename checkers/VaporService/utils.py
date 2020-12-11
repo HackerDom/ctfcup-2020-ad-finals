@@ -35,7 +35,7 @@ def get_token():
     return str(uuid.uuid4())
 
 
-def get_random_string(min_len, max_len):
+def get_string_range(min_len, max_len):
     return get_random_string(randrange(min_len, max_len))
 
 

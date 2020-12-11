@@ -3,7 +3,7 @@ import json
 from random import randrange
 
 from gornilo import Checker, CheckRequest, PutRequest, GetRequest, Verdict
-from api import Api
+from api import Api, HTTPException
 from uuid import uuid4
 from requests.exceptions import RequestException
 import utils
@@ -15,64 +15,71 @@ def randomize() -> str:
     return str(uuid4())
 
 
+class Object(object):
+    pass
+
+
 @checker.define_check
 def check(check_request: CheckRequest) -> Verdict:
     api = Api(check_request.hostname)
     try:
-        user = {}
-        user.name = utils.get_user_name()
-        user.password = utils.get_user_pass()
+        user = Object()
+        user.name = utils.get_string_range(5, 10) + utils.get_token()
+        user.password = utils.get_token()
         api.register(user.name, user.password)
 
-        shared = {}
-        shared.name = utils.get_random_string(5, 10) + utils.get_token()
+        shared = Object()
+        shared.name = utils.get_string_range(5, 10) + utils.get_token()
         shared.isVorpal = randrange(1, 2) % 2 == 0
         shared.force = randrange(0, 100)
-        shared.flag = utils.get_random_string(5, 64)
+        shared.flag = utils.get_string_range(5, 64)
         api.add_shared_weapon(shared.name, shared.isVorpal, shared.force, shared.flag)
         checked = api.get_weapon(shared.name)
-        if compare_insensetive(shared, json.loads(checked)) is False:
+        if compare_insensetive(shared.__dict__, checked):
             return Verdict.MUMBLE("expected %s, recived %s" % (json.dumps(shared), checked))
 
-        claimed = {}
-        claimed.name = utils.get_random_string(5, 10)
+        claimed = Object()
+        claimed.name = utils.get_string_range(5, 10) + utils.get_token()
         claimed.isVorpal = randrange(0, 100) % 2 == 0
         claimed.force = randrange(0, 100)
-        claimed.flag = utils.get_random_string(5, 64)
-        api.add_shared_weapon(claimed.name, claimed.isVorpal, claimed.force, claimed.flag)
+        claimed.flag = utils.get_string_range(5, 64)
+        api.add_claimed_weapon(claimed.name, claimed.isVorpal, claimed.force, claimed.flag)
         checked = api.get_weapon(claimed.name)
-        if compare_insensetive(claimed, json.loads(checked)) is False:
+        if compare_insensetive(claimed.__dict__, checked):
             return Verdict.MUMBLE("expected %s, recived %s" % (json.dumps(claimed), checked))
 
         weapon_list = api.get_weapon_list()
+
         if claimed.name not in weapon_list or shared.name not in weapon_list:
             return Verdict.MUMBLE("weapon list return not all weapon")
 
-        jw = {}
-        jw.seed = utils.get_random_string(5, 10) + utils.get_token()
+        jw = Object()
+        jw.seed = utils.get_string_range(5, 10) + utils.get_token()
         jw.breeder = user.name
-        jw.flag = user.utils.get_random_string(5, 64)
+        jw.flag = utils.get_string_range(5, 64)
         jw.force = randrange(0, 100)
         jw.has_jaws = randrange(1, 2) % 2 == 0
         jw.has_claws = randrange(1, 2) % 2 == 0
 
         api.add_juberwocky(jw.seed, jw.breeder, jw.flag, jw.force, jw.has_jaws, jw.has_claws)
         checked_jw = api.get_juberwocky(jw.seed)
-        if compare_insensetive(jw, json.loads(checked_jw)) is False:
+        if compare_insensetive(jw.__dict__, checked_jw):
             return Verdict.MUMBLE("expected %s, recived %s" % (json.dumps(jw), checked_jw))
 
-        test = {}
-        test.name = utils.get_random_string(5, 10)
+        test = Object()
+        test.name = utils.get_string_range(5, 10) + utils.get_token()
         test.isVorpal = False
         test.force = randrange(0, 100)
-        test.flag = utils.get_random_string(5, 64)
+        test.flag = utils.get_string_range(5, 64)
         api.add_shared_weapon(test.name, test.isVorpal, test.force, test.flag)
 
         result = api.test_weapon(jw.seed, test.name)
-        if result["JabberwockyDefeated"] != test.force >= jw.force:
+        if result['JabberwockyDefeated'] != (test.force >= jw.force):
             return Verdict.MUMBLE("Bad forecast")
 
         return Verdict.OK()
+    except HTTPException as e:
+        return e.verdict
     except RequestException as e:
         print(f"can't connect due to {e}")
         return Verdict.DOWN("can't connect to host")
@@ -86,19 +93,21 @@ def put(put_request: PutRequest) -> Verdict:
     api = Api(put_request.hostname)
     flag = put_request.flag
     try:
-        user = {}
+        user = Object()
         user.name = utils.get_user_name()
         user.password = utils.get_user_pass()
         api.register(user.name, user.password)
 
-        claimed = {}
-        claimed.name = utils.get_random_string(5, 10)
+        claimed = Object()
+        claimed.name = utils.get_string_range(5, 10)
         claimed.isVorpal = randrange(0, 100) % 2 == 0
         claimed.force = randrange(0, 100)
         claimed.flag = flag
         api.add_shared_weapon(claimed.name, claimed.isVorpal, claimed.force, claimed.flag)
 
         return Verdict.OK(f"{user.name}:{user.password}:{claimed.name}:{claimed.flag}")
+    except HTTPException as e:
+        return e.verdict
     except RequestException as e:
         print(f"timeout on connect {e}")
         return Verdict.DOWN("timeout")
@@ -123,6 +132,8 @@ def get(get_request: GetRequest) -> Verdict:
         except Exception as e:
             print(f"bad access {e}")
             return Verdict.CORRUPT("can't reach flag")
+    except HTTPException as e:
+        return e.verdict
     except RequestException as e:
         print(e)
         return Verdict.DOWN("seems to be down")
@@ -136,13 +147,13 @@ def put2(put_request: PutRequest) -> Verdict:
     api = Api(put_request.hostname)
     flag = put_request.flag
     try:
-        user = {}
+        user = Object()
         user.name = utils.get_user_name()
         user.password = utils.get_user_pass()
         api.register(user.name, user.password)
 
-        jw = {}
-        jw.seed = utils.get_random_string(5, 10) + utils.get_token()
+        jw = Object()
+        jw.seed = utils.get_string_range(5, 10) + utils.get_token()
         jw.breeder = user.name
         jw.flag = flag
         jw.force = randrange(0, 100)
@@ -152,6 +163,8 @@ def put2(put_request: PutRequest) -> Verdict:
         api.add_juberwocky(jw.seed, jw.breeder, jw.flag, jw.force, jw.has_jaws, jw.has_claws)
 
         return Verdict.OK(f"{user.name}:{user.password}:{jw.seed}:{jw.flag}")
+    except HTTPException as e:
+        return e.verdict
     except RequestException as e:
         print(f"timeout on connect {e}")
         return Verdict.DOWN("timeout")
@@ -176,6 +189,8 @@ def get2(get_request: GetRequest) -> Verdict:
         except Exception as e:
             print(f"bad access {e}")
             return Verdict.CORRUPT("can't reach flag")
+    except HTTPException as e:
+        return e.verdict
     except RequestException as e:
         print(e)
         return Verdict.DOWN("seems to be down")
@@ -185,7 +200,9 @@ def get2(get_request: GetRequest) -> Verdict:
 
 
 def compare_insensetive(first, second):
-    return json.loads(first.dumps(first).lower()) != json.loads(json.dumps(second).lower())
+    first_str = json.dumps(first).lower()
+    second_str = json.dumps(second).lower()
+    return first_str == second_str
 
 
 checker.run()
