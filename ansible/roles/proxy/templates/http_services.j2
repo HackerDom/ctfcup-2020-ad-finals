@@ -12,7 +12,7 @@
 ] %}
 
 ### Log format
-log_format upstream_info '[$time_iso8601]\t$remote_addr\t$request_method\t$request'
+log_format upstream_info '[$time_iso8601]\t$remote_addr\t$request'
                          '\tstatus=$status\tupstream_time=$upstream_response_time\trequest_time=$request_time'
                          '\trl=$request_length\tbs=$bytes_sent';
 
