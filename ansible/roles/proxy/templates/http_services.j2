@@ -11,6 +11,13 @@
     },
 ] %}
 
+### Log format
+log_format upstream_info '[$time_iso8601]\t$remote_addr\t$request'
+                         '\tstatus=$status\tupstream_time=$upstream_response_time\trequest_time=$request_time'
+                         '\trl=$request_length\tbs=$bytes_sent';
+
+### Services
+
 {%- for team_id in range(101, 101+10) %}
 
 {%- for service in services %}
@@ -21,7 +28,7 @@
 server {
     listen {{ in_port }};
 
-    access_log /var/log/nginx/proxy_{{in_port}}_access.log;
+    access_log /var/log/nginx/proxy_{{in_port}}_access.log upstream_info;
     error_log /var/log/nginx/proxy_{{in_port}}_error.log;
 
     location / {
