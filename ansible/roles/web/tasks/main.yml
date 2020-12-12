@@ -45,4 +45,5 @@
 
 - name: deploy logos
   synchronize: src="../../../../teams/logos" dest="/var/www/"
+  tags: [update, logos]
 
