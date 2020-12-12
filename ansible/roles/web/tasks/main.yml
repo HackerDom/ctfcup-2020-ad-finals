@@ -42,3 +42,7 @@
   notify:
     - restart nginx
   tags: update
+
+- name: deploy logos
+  synchronize: src="../../../../teams/logos" dest="/var/www/"
+
